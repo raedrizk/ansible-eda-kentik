@@ -1,6 +1,6 @@
 ---
 - name: Restart The Apache service
-  hosts: "{{ reporting_webserver }}"
+  hosts: "{{ reporting_host | basename }}"
   gather_facts: false
   become: true
   tasks:

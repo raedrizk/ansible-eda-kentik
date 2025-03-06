@@ -12,5 +12,9 @@
       condition: event.payload.TestType == 'HTTP(S) or API' and event.payload.AlarmSeverity == 'critical'
       ## Restart the webservice
       action:
-        debug:
-          msg: Reporting Host is "{{ event.payload.issue[0].Target }}"
+        run_job_template:
+          name: EDADemo-action-kentik-restart-apache
+          organization: "{{ job_templates_org_name | default('Foxhound') }}"
+          job_args:
+            extra_vars:
+              reporting_host: "{{ event.payload.issue[0].Target }}"

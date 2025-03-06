@@ -1,0 +1,25 @@
+---
+- name: Listen for alert notifications from Kentik
+  hosts: localhost
+  ## Listening on port 5000.
+  sources:
+    - kentik.ansible_eda.kentik_webhook:
+        host: 0.0.0.0
+        port: 5000
+  rules:
+      ## Checking for critical issues with HTTP tests
+    - name: Web Application Down - Critical Error
+      condition: event.payload.TestType == 'HTTP(S) or API' and event.payload.AlarmSeverity == 'critical'
+      ## Restart the webservice
+      action:
+        run_workflow_template:
+          name: WF_EDA_Action_Kentik_report_and_resolve_apache_issue
+          organization: "{{ job_templates_org_name | default('Foxhound') }}"
+          job_args:
+            limit: "{{ event.payload.issue[0].Target }}"
+            extra_vars:
+              reporting_host: "{{ event.payload.issue[0].Target }}"
+              snow_inc_short_desc: "Kentik Reports Critical issue on {{ event.payload.issue[0].Target }}"
+              snow_inc_desc: "Critical issue detected on {{ event.payload.issue[0].Target }} from HTTP test. Reported by Kentik and forwarded to EDA"
+              snow_inc_urgency: "{{ snow_inc_urgency_choice | default('medium') }}"
+              snow_inc_impact: "{{ snow_inc_impact_choice | default('medium') }}"

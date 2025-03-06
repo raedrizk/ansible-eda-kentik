@@ -1,0 +1,10 @@
+---
+- name: Pull Apache logs
+  hosts: "{{ reporting_host | basename }}"
+  gather_facts: false
+  become: true
+  tasks:
+  #TODO ADD TASK tp PULL LOGS
+    - name: Pull apache logs
+      ansible.builtin.debug:
+        msg: "Pull Logs"
