@@ -13,4 +13,4 @@
       ## Restart the webservice
       action:
         debug:
-          msg: Reporting Host is "{{ event.payload.issue[0].Target | basename }}"
+          msg: Reporting Host is "{{ event.payload.issue[0].Target }}"
