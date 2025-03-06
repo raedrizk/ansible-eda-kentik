@@ -1,0 +1,16 @@
+---
+- name: Listen for alert notifications from Kentik
+  hosts: localhost
+  ## Listening on port 5000.
+  sources:
+    - kentik.ansible_eda.kentik_webhook:
+        host: 0.0.0.0
+        port: 5000
+  rules:
+      ## Checking for critical issues with HTTP tests
+    - name: Web Application Down - Critical Error
+      condition: event.payload.TestType == 'HTTP(S) or API' and event.payload.AlarmSeverity == 'critical'
+      ## Restart the webservice
+      action:
+        debug:
+          msg: Reporting Host is "{{ event.payload.issue[0].Target | basename }}"
